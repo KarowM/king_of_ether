@@ -15,15 +15,20 @@ contract KingOfEther {
         OfferLog(msg.sender, msg.value);
         require (currentPrice < msg.value);
 
-        currentPrice = msg.value;
-        currentKing.transfer(msg.value - currentPrice);
-        currentKing = msg.sender;
-        kingNames[msg.sender] = name;
+        setNewKing(msg.value, msg.sender, name);
         return true;
     }
 
     function getCurrentKing() public view returns (string)
     {
         return kingNames[currentKing];
+    }
+
+    function setNewKing(uint offering, address newKing, string newKingName) private
+    {
+        currentPrice = offering;
+        currentKing.transfer(offering - currentPrice);
+        currentKing = newKing;
+        kingNames[newKing] = newKingName;
     }
 }
