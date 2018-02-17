@@ -5,8 +5,14 @@ contract KingOfEther {
     uint private currentPrice = 0;
     mapping (address => string) private kingNames;
 
+    event OfferLog (
+        address sender,
+        uint value
+    );
+
     function offerForThrone(string name) external payable returns (bool)
     {
+        OfferLog(msg.sender, msg.value);
         require (currentPrice < msg.value);
 
         currentPrice = msg.value;
