@@ -5,12 +5,37 @@ contract KingOfEther {
     uint private currentPrice = 0;
     mapping (address => string) private kingNames;
 
-    function offerForThrone(string name) external payable returns (bool)
-    {
-        require (currentPrice < msg.value);
+    uint constant roundDuration = 10 seconds;
+    uint private roundEnd;
 
-        setNewKing(msg.value, msg.sender, name);
-        return true;
+    address private highestBidder;
+    uint private highestBid;
+
+    mapping (address => uint) private pendingRefunds;
+
+    function offer(string name) external payable
+    {
+        require (highestBid < msg.value);
+
+        if (highestBid == 0)
+        {
+            startNewRound();
+            setNewHighestBidder(msg.sender, msg.value, name);
+        }
+        else
+        {
+            if (now < roundEnd)
+            {
+                pendingRefunds[highestBidder] += highestBid;
+                setNewHighestBidder(msg.sender, msg.value, name);
+            }
+            else
+            {
+                setNewKing();
+                startNewRound();
+                setNewHighestBidder(msg.sender, msg.value, name);
+            }
+        }
     }
 
     function getCurrentKing() public view returns (string)
@@ -23,11 +48,35 @@ contract KingOfEther {
         return currentPrice;
     }
 
-    function setNewKing(uint offering, address newKing, string newKingName) private
+    function hasRoundEnded() public returns (bool)
     {
-        currentPrice = offering;
-        currentKing.transfer(offering - currentPrice);
-        currentKing = newKing;
-        kingNames[newKing] = newKingName;
+        if (now < roundEnd)
+        {
+            return false;
+        }
+        else
+        {
+            setNewKing();
+            return true;
+        }
+    }
+
+    function setNewKing() private
+    {
+        pendingRefunds[currentKing] += (highestBid - currentPrice);
+        currentKing = highestBidder;
+        currentPrice = highestBid;
+    }
+
+    function setNewHighestBidder(address bidderAddress, uint bid, string kingName) private
+    {
+        highestBidder = bidderAddress;
+        highestBid = bid;
+        kingNames[bidderAddress] = kingName;
+    }
+
+    function startNewRound() private
+    {
+        roundEnd = now + roundDuration;
     }
 }
