@@ -16,7 +16,7 @@ contract KingOfEther {
     function offer(string name) external payable
     {
         require (highestBid < msg.value);
-
+ 
         if (highestBid == 0)
         {
             startNewRound();
