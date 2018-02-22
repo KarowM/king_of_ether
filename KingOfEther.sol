@@ -16,7 +16,7 @@ contract KingOfEther {
     function offer(string name) external payable
     {
         require (highestBid < msg.value);
- 
+
         if (highestBid == 0)
         {
             startNewRound();
@@ -78,5 +78,21 @@ contract KingOfEther {
     function startNewRound() private
     {
         roundEnd = now + roundDuration;
+    }
+
+    function withdraw() public returns (bool)
+    {
+        uint refundSum = pendingRefunds[msg.sender];
+        if (refundSum > 0)
+        {
+            pendingRefunds[msg.sender] = 0;
+
+            if (msg.sender.send(refundSum))
+            {
+                pendingRefunds[msg.sender] = refundSum;
+                return false;
+            }
+        }
+        return true;
     }
 }
