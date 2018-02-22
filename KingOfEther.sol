@@ -24,6 +24,11 @@ contract KingOfEther {
         return kingNames[currentKing];
     }
 
+    function getCurrentPrice() public view returns (uint)
+    {
+        return currentPrice;
+    }
+
     function setNewKing(uint offering, address newKing, string newKingName) private
     {
         currentPrice = offering;
