@@ -2,10 +2,11 @@ pragma solidity ^0.4.20;
 
 contract KingOfEther {
     address private currentKing;
+    string private currentKingName;
     uint private currentPrice = 0;
     mapping (address => string) private kingNames;
 
-    uint constant roundDuration = 10 seconds;
+    uint constant roundDuration = 15 seconds;
     uint private roundEnd;
 
     address private highestBidder;
@@ -40,7 +41,7 @@ contract KingOfEther {
 
     function getCurrentKing() public view returns (string)
     {
-        return kingNames[currentKing];
+        return currentKingName;
     }
 
     function getCurrentPrice() public view returns (uint)
@@ -65,14 +66,15 @@ contract KingOfEther {
     {
         pendingRefunds[currentKing] += (highestBid - currentPrice);
         currentKing = highestBidder;
+        currentKingName = kingNames[highestBidder];
         currentPrice = highestBid;
     }
 
-    function setNewHighestBidder(address bidderAddress, uint bid, string kingName) private
+    function setNewHighestBidder(address bidder, uint bid, string kingName) private
     {
-        highestBidder = bidderAddress;
+        highestBidder = bidder;
         highestBid = bid;
-        kingNames[bidderAddress] = kingName;
+        kingNames[bidder] = kingName;
     }
 
     function startNewRound() private
