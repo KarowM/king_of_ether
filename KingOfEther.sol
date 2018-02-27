@@ -1,9 +1,9 @@
 pragma solidity ^0.4.20;
 
 contract KingOfEther {
-    address private currentKing;
-    string private currentKingName;
-    uint private currentPrice = 0;
+    address private king;
+    string private kingName;
+    uint private kingPrice = 0;
     mapping (address => string) private kingNames;
 
     uint constant roundDuration = 15 seconds;
@@ -38,14 +38,14 @@ contract KingOfEther {
         }
     }
 
-    function getCurrentKing() public view returns (string)
+    function getKing() public view returns (string)
     {
-        return currentKingName;
+        return kingName;
     }
 
-    function getCurrentPrice() public view returns (uint)
+    function getKingPrice() public view returns (uint)
     {
-        return currentPrice;
+        return kingPrice;
     }
 
     function hasRoundEnded() public returns (bool)
@@ -58,24 +58,9 @@ contract KingOfEther {
         return false;
     }
 
-    function setNewKing() private
+    function getHighestBidder() public view returns (uint)
     {
-        pendingRefunds[currentKing] += (highestBid - currentPrice);
-        currentKing = highestBidder;
-        currentKingName = kingNames[highestBidder];
-        currentPrice = highestBid;
-    }
-
-    function setNewHighestBidder(address bidder, uint bid, string kingName) private
-    {
-        highestBidder = bidder;
-        highestBid = bid;
-        kingNames[bidder] = kingName;
-    }
-
-    function startNewRound() private
-    {
-        roundEnd = now + roundDuration;
+        return highestBid;
     }
 
     function withdraw() public returns (bool)
@@ -92,5 +77,25 @@ contract KingOfEther {
             }
         }
         return true;
+    }
+
+    function startNewRound() private
+    {
+        roundEnd = now + roundDuration;
+    }
+
+    function setNewKing() private
+    {
+        pendingRefunds[king] += (highestBid - kingPrice);
+        king = highestBidder;
+        kingName = kingNames[highestBidder];
+        kingPrice = highestBid;
+    }
+
+    function setNewHighestBidder(address bidder, uint bid, string bidderKingName) private
+    {
+        highestBidder = bidder;
+        highestBid = bid;
+        kingNames[bidder] = bidderKingName;
     }
 }
