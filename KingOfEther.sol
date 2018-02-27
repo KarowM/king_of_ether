@@ -6,7 +6,7 @@ contract KingOfEther {
     uint private kingPrice = 0;
     mapping (address => string) private kingNames;
 
-    uint constant roundDuration = 15 seconds;
+    uint constant roundDuration = 1 days;
     uint private roundEnd;
 
     address private highestBidder;
