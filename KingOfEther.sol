@@ -27,7 +27,6 @@ contract KingOfEther {
         {
             if (hasRoundEnded())
             {
-                setNewKing();
                 startNewRound();
             }
             else
