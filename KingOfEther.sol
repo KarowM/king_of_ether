@@ -14,7 +14,7 @@ contract KingOfEther {
 
     mapping (address => uint) private pendingRefunds;
 
-    function offer(string name) external payable
+    function bid(string name) external payable
     {
         require (highestBid < msg.value);
 
@@ -65,6 +65,7 @@ contract KingOfEther {
 
     function withdraw() public returns (bool)
     {
+        require(msg.sender != highestBidder);
         uint refundSum = pendingRefunds[msg.sender];
         if (refundSum > 0)
         {
