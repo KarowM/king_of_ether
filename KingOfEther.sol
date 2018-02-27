@@ -25,17 +25,16 @@ contract KingOfEther {
         }
         else
         {
-            if (now < roundEnd)
-            {
-                pendingRefunds[highestBidder] += highestBid;
-                setNewHighestBidder(msg.sender, msg.value, name);
-            }
-            else
+            if (hasRoundEnded())
             {
                 setNewKing();
                 startNewRound();
-                setNewHighestBidder(msg.sender, msg.value, name);
             }
+            else
+            {
+                pendingRefunds[highestBidder] += highestBid;
+            }
+            setNewHighestBidder(msg.sender, msg.value, name);
         }
     }
 
@@ -51,15 +50,12 @@ contract KingOfEther {
 
     function hasRoundEnded() public returns (bool)
     {
-        if (now < roundEnd)
-        {
-            return false;
-        }
-        else
+        if (now > roundEnd)
         {
             setNewKing();
             return true;
         }
+        return false;
     }
 
     function setNewKing() private
