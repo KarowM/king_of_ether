@@ -70,7 +70,7 @@ contract KingOfEther {
         {
             pendingRefunds[msg.sender] = 0;
 
-            if (msg.sender.send(refundSum))
+            if (!msg.sender.send(refundSum))
             {
                 pendingRefunds[msg.sender] = refundSum;
                 return false;
